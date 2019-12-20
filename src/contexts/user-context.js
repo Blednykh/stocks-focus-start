@@ -1,8 +1,11 @@
-import { createContext } from 'react';
+import {createContext} from 'react';
 
 const UserContext = createContext({
     authenticated: false,
-    toggleAuthenticated(){}
+    message: false,
+    userName: "Guest",
+    toggleAuthenticated() {},
+    signOut() {}
 });
 
 export default UserContext;

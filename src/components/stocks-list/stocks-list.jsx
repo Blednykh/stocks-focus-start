@@ -1,23 +1,19 @@
 import React from 'react';
 import Stock from "../stock";
-
+import Locale from "../../locale";
 
 import './stocks-list.scss';
 import {StocksContext} from '../../contexts/stocks-context';
 
-
-
 class StocksList extends React.Component {
     static contextType = StocksContext;
-    state = { searchValue: "", timer: undefined};
-
- /*   state = {stocks: [], page: "stocks"};*/
-
+    state = { searchValue: "", timer: undefined };
+    myscroll = React.createRef();
 
     handleScroll = () => {
         if (
-            this.refs.myscroll.scrollTop + this.refs.myscroll.clientHeight >=
-            this.refs.myscroll.scrollHeight
+            this.myscroll.current.scrollTop + this.myscroll.current.clientHeight >=
+            this.myscroll.current.scrollHeight
         ) {
             this.context.scrollLoading();
         }
@@ -27,20 +23,21 @@ class StocksList extends React.Component {
     handleInput = event => {
         let { timer } = this.state;
 
-        this.setState({searchValue: Number(event.target.value)});
+        this.setState({ searchValue: Number(event.target.value) });
 
         if (timer) {
             clearTimeout(timer);
-            timer = setTimeout(this.context.changeSearchValue,500, event.target.value,this.context.page);
-            this.setState({timer});
-        }
-        else{
-            timer = setTimeout(this.context.changeSearchValue,500, event.target.value,this.context.page);
-            this.setState({timer});
+            timer = setTimeout(this.context.changeSearchValue, 500, event.target.value, this.context.page);
+            this.setState({ timer });
+        } else {
+            timer = setTimeout(this.context.changeSearchValue, 500, event.target.value, this.context.page);
+            this.setState({ timer });
         }
     };
 
     render() {
+        const locale = Locale.stocksList;
+
         const {
             stocks,
             loading,
@@ -54,62 +51,46 @@ class StocksList extends React.Component {
         return (
             <div className="stocks-list">
                 <div className="stocks-list__button-bar">
-
                     <button
                         className={`stocks-list__button${
                             (page === "stocks" ? ' stocks-list__button_active' : '')}`
                         }
-                        onClick={renderStocksList}>
-                        ALL STOCKS
+                        onClick={renderStocksList}>{locale.buttons[0]}
                     </button>
                     <button
                         className={`stocks-list__button${
                             (page === "userstocks" ? ' stocks-list__button_active' : '')}`
                         }
-                        onClick={renderUserStockList}>MY STOCKS
+                        onClick={renderUserStockList}>{locale.buttons[1]}
                     </button>
                     <button
                         className={`stocks-list__button${
                             (page === "transactions" ? ' stocks-list__button_active' : '')}`
                         }
-                        onClick={renderHistory}>TRANSACTION HISTORY
+                        onClick={renderHistory}>{locale.buttons[2]}
                     </button>
                 </div>
                 <div className="search-bar">
-                    <input type='text'  className="search-input" placeholder='Search stock...' onChange={this.handleInput}/>
+                    <input type='text' className="search-input" placeholder='Search stock...'
+                           onChange={this.handleInput}/>
                 </div>
                 <div
                     className="stocks-list__list"
                     onScroll={this.handleScroll}
-                    ref="myscroll"
-                   /* ref={(element)=>{this.element = element}}*/
+                    ref={this.myscroll}
                 >
                     {stocks.map((stock) => {
                         return <Stock
-                            key={stock.symbol+stock.date}
+                            key={stock.symbol + stock.date}
                             stock={stock}
+                            page={page}
                             renderStockInfo={this.props.renderStockInfo}
                         />
                     })}
-                   {/* {stocks.map(({symbol, profile, count, transactionCount, middlePrice, date, type}) => {
-                        return <Stock
-                            key={symbol+date}
-                            symbol={symbol}
-                            price={middlePrice ? middlePrice : profile.price}
-                            title={profile.companyName}
-                            image={profile.image}
-                            count={page==="transactions" ? transactionCount : count}
-                            date={date}
-                            type={type}
-                            profile={profile}
-                            renderStockInfo={this.props.renderStockInfo}
-                        />
-                    })}*/}
                 </div>
             </div>
         );
     }
-
 }
 
 export default StocksList;

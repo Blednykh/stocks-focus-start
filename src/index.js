@@ -6,11 +6,8 @@ import StocksProvider from "./contexts/stocks-context";
 
 const rootElement = document.querySelector('#root');
 
-
-
 ReactDOM.render(
     <StocksProvider>
         <Root/>
     </StocksProvider>
-
     , rootElement);

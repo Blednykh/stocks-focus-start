@@ -1,5 +1,6 @@
-import React,{ createContext, Component} from 'react';
+import React, {createContext, Component} from 'react';
 import backRequest from '../api/back-request';
+import Loader from "../components/loader";
 
 export const StocksContext = createContext({
     stocks: [],
@@ -9,65 +10,42 @@ export const StocksContext = createContext({
     searchValue: "",
     offset: 0,
     windowedCount: 0,
-    renderStocksList(){},
-    renderUserStockList(){},
-    renderHistory(){},
-    scrollLoading(){},
-    changeSearchValue(){},
-    setTransaction(){}
+    userId: "",
+    renderStocksList() {
+    },
+    renderUserStockList() {
+    },
+    renderHistory() {
+    },
+    scrollLoading() {
+    },
+    changeSearchValue() {
+    },
+    setTransaction() {
+    },
+    changeWindowedCount() {
+    },
+    setUserId() {
+    }
 });
 
 class StocksProvider extends Component {
-    state = { stocks: [], loading: false, message: null, page: "stocks", searchValue: "", offset: 0, windowedCount: 0};
-
-   /* componentDidMount() {
-        this.setState({ loading: true });
-        tomorrowRequest.get('/stocks/?offset=0').then(responce => {
-            const stocks = responce.data.data;
-            this.setState({ stocks, loading: false });
-            console.log("stocks_context",stocks);
-        })
-            .catch(() => this.setState({ message: 'NETWORK_ERROR', loading: false }));
-    }
-
-    renderStocksList = () => {
-        tomorrowRequest.get('/stocks/?offset=0').then(responce => {
-            const stocks = responce.data.data;
-            this.setState({stocks, page: "stocks"});
-        })
+    state = {
+        stocks: [],
+        loading: false,
+        message: null,
+        page: "stocks",
+        searchValue: "",
+        offset: 0,
+        windowedCount: 0,
+        userId: ""
     };
-    renderUserStockList = () => {
-        tomorrowRequest.get('/userstocks/?offset=0').then(responce => {
-            const stocks = responce.data.data;
-            this.setState({stocks, page: "userStocks"});
-        })
-    };
-    renderHistory = () => {
-        tomorrowRequest.get('/transactions/?offset=0').then(responce => {
-            const stocks = responce.data.data;
-            this.setState({stocks, page: "transactions"});
-        })
-    };
-    handleScroll = () => {
-        if (
-            this.refs.myscroll.scrollTop + this.refs.myscroll.clientHeight >=
-            this.refs.myscroll.scrollHeight
-        ) {
-            let { stocks } = this.state;
-            tomorrowRequest.get('/stocks/?offset=5').then(responce => {
-                stocks = stocks.concat(responce.data.data);
-                console.log("новые стоки", stocks, responce.data.data);
-                this.setState({ stocks, page: "stocks" });
-            })
-        }
-    };*/
 
     renderList = (page, searchValue) => {
-        console.log("renderList",page, searchValue);
-        backRequest.get(`/${page}/?offset=0&name=${searchValue}`).then(responce => {
+        this.setState({  loading: true, stocks: [] });
+        backRequest.get(`/${page}/?offset=0&name=${searchValue}&userId=${this.state.userId}`).then(responce => {
             const stocks = responce.data.data;
-            console.log("renderList__stocks", stocks);
-            this.setState({ stocks, page });
+            this.setState({ stocks, page, loading: false});
         })
     };
 
@@ -82,18 +60,18 @@ class StocksProvider extends Component {
 
     };
     renderUserStockList = () => {
-        this.setState({ page: "userstocks", offset: 0  });
-        this.renderList("userstocks",this.state.searchValue);
+        this.setState({ page: "userstocks", offset: 0 });
+        this.renderList("userstocks", this.state.searchValue);
     };
     renderHistory = () => {
-        this.setState({ page: "transactions", offset: 0  });
-        this.renderList("transactions",this.state.searchValue);
+        this.setState({ page: "transactions", offset: 0 });
+        this.renderList("transactions", this.state.searchValue);
     };
 
-    scrollLoading  = () => {
-        let { stocks, page, offset, searchValue } = this.state;
-        offset+=10;
-        backRequest.get(`/${page}/?offset=${offset}&name=${searchValue}`).then(responce => {
+    scrollLoading = () => {
+        let { stocks, page, offset, searchValue, userId } = this.state;
+        offset += 10;
+        backRequest.get(`/${page}/?offset=${offset}&name=${searchValue}&userId=${userId}`).then(responce => {
             stocks = stocks.concat(responce.data.data);
             this.setState({ stocks, offset: offset});
         })
@@ -102,40 +80,57 @@ class StocksProvider extends Component {
         this.setState({ searchValue, offset: 0 });
         this.renderList(page, searchValue);
     };
-    setTransaction = (symbol, count, price, type) => e => {
-        console.log(symbol, count, price, type);
+
+    changeWindowedCount = (count) => {
+        this.setState({ windowedCount: count });
+    };
+
+    setUserId = (userId) => {
+        this.setState({ userId });
+    };
+
+
+    setTransaction = (symbol, count, price, type) => {
         backRequest.post('/userstocks/', {
             symbol,
             count,
             price,
             type,
+            userId: this.state.userId
         }).then(responce => {
             const data = responce.data.data;
-            if (data.count !== 0) {
-                this.setState({windowedCount: data.count});
+            if (data && data.count !== 0) {
+                this.setState({ windowedCount: data.count });
                 let { stocks, page, searchValue } = this.state;
-                if(page === "transactions"){
+                if (page === "transactions") {
                     this.renderList(page, searchValue);
                 }
-                if(page === "userstocks"){
-                    const findIndex = stocks.findIndex(item =>item.symbol===data.symbol);
-                    if(findIndex!==-1){
+                if (page === "userstocks") {
+                    const findIndex = stocks.findIndex(item => item.symbol === data.symbol);
+                    if (findIndex !== -1) {
                         stocks[findIndex].count = data.count;
                         this.setState({ stocks });
-                    }
-                    else{
+                    } else {
                         this.renderList(page, searchValue);
                     }
-                    /*console.log("aaaaaaa", data.symbol, findIndex, stocks[findIndex].count, stocks);*/
                 }
-
+            }
+            else{
+                this.setState({ windowedCount: 0});
+                let { stocks, page, searchValue } = this.state;
+                if (page === "transactions") {
+                    this.renderList(page, searchValue);
+                }
+                if (page === "userstocks") {
+                    this.renderList(page, searchValue);
+                }
             }
         })
     };
 
 
-    render(){
-        const { stocks, loading, message, page, searchValue, offset, windowedCount} = this.state;
+    render() {
+        const { stocks, loading, message, page, searchValue, offset, windowedCount, userId } = this.state;
         return (
             <StocksContext.Provider value={{
                 stocks,
@@ -145,14 +140,18 @@ class StocksProvider extends Component {
                 searchValue,
                 offset,
                 windowedCount,
+                userId,
                 renderStocksList: this.renderStocksList,
                 renderUserStockList: this.renderUserStockList,
                 renderHistory: this.renderHistory,
                 scrollLoading: this.scrollLoading,
                 changeSearchValue: this.changeSearchValue,
                 setTransaction: this.setTransaction,
+                changeWindowedCount: this.changeWindowedCount,
+                setUserId: this.setUserId
             }}>
                 {this.props.children}
+                {this.state.loading && userId!=='' && <Loader/>}
             </StocksContext.Provider>
         )
     }

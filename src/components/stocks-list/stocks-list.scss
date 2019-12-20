@@ -1,4 +1,4 @@
-.stocks-list{
+.stocks-list {
   max-width: 400px;
   min-width: 400px;
   padding-top: 20px;
@@ -9,45 +9,68 @@
   top: 0;
   height: 100vh;
 
-  &__button-bar{
+  &__button-bar {
     height: 40px;
     display: flex;
     justify-content: space-between;
     font-size: 15px;
   }
 
-  &__button{
-     /*    display: block;*/
-     /*height: 100%;
-     line-height: 40px;*/
+  &__button {
     border: none;
     border-bottom: 3px solid transparent;
     background: none;
     outline: none;
     width: 25%;
     color: white;
-   }
-  &__button_active{
+    cursor: pointer;
+  }
+
+  &__button_active {
     border-bottom: 3px solid #5887ee;
   }
 
-  &__button:nth-child(3){
-   width: 50%;
+  &__button:nth-child(3) {
+    width: 50%;
   }
 
-  &__list{
+  &__list {
     height: 80%;
     overflow: auto;
   }
 }
-.search-bar{
+
+.search-bar {
   background: #a5a5a5;
 }
-.search-input{
+
+.search-input {
   width: 100%;
   padding: 10px;
   border: 1px solid #a5a5a5;
 }
-.search-input:focus{
+
+.search-input:focus {
   border: 1px solid #5887ee;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  width: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #494949;
 }
