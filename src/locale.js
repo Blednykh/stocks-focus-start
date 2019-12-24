@@ -1,5 +1,3 @@
-import React from "react";
-
 export default {
     signInForm: {
         title: ['Registration', 'Sign In'],

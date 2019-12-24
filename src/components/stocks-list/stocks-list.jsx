@@ -7,7 +7,9 @@ import {StocksContext} from '../../contexts/stocks-context';
 
 class StocksList extends React.Component {
     static contextType = StocksContext;
+
     state = { searchValue: "", timer: undefined };
+
     myscroll = React.createRef();
 
     handleScroll = () => {
@@ -40,8 +42,6 @@ class StocksList extends React.Component {
 
         const {
             stocks,
-            loading,
-            message,
             page,
             renderStocksList,
             renderUserStockList,

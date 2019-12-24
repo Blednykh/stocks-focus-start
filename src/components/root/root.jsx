@@ -16,7 +16,6 @@ class Root extends React.Component {
 
     state = {
         selectedStock: undefined,
-        page: "stocks",
         loading: false,
         message: false,
         authenticated: false,
@@ -35,7 +34,6 @@ class Root extends React.Component {
     }
 
     toggleAuthenticated = (userName, password, newUser) => e => {
-        console.log("toggleAuthenticated");
         this.context.renderStocksList();
         this.setState({loading: true, authenticated: !this.state.authenticated});
         backRequest.post('/users/', {
@@ -48,6 +46,7 @@ class Root extends React.Component {
             }
             else{
                 const data = responce.data.data;
+
                 data && this.context.setUserId(data);
                 data && this.setState({userName, loading: false, message: false});
                 localStorage.setItem('userId', data);
@@ -61,6 +60,7 @@ class Root extends React.Component {
         if (!selectedStock.count) {
             backRequest.get(`/userstocks/${selectedStock.symbol}?userId=${this.context.userId}`).then(responce => {
                 const stock = responce.data.data;
+
                 this.context.changeWindowedCount((stock) ? stock.count : 0);
             })
         } else {
@@ -104,7 +104,6 @@ class Root extends React.Component {
                         setTransaction={this.setTransaction}
                     />}
                 </main>
-           {/*     <Loader/>*/}
             </div>
 
         );

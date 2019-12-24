@@ -2,7 +2,6 @@ import React from 'react';
 
 import './loader.scss';
 
-
 class Loader extends React.Component {
 
     render() {
@@ -12,7 +11,6 @@ class Loader extends React.Component {
             </div>
         );
     }
-
 }
 
 export default Loader;

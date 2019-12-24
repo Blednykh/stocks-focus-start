@@ -4,8 +4,6 @@ import Loader from "../components/loader";
 
 export const StocksContext = createContext({
     stocks: [],
-    loading: false,
-    message: null,
     page: "",
     searchValue: "",
     offset: 0,
@@ -25,7 +23,6 @@ class StocksProvider extends Component {
     state = {
         stocks: [],
         loading: false,
-        message: null,
         page: "stocks",
         searchValue: "",
         offset: 0,
@@ -62,6 +59,7 @@ class StocksProvider extends Component {
 
     scrollLoading = () => {
         let { stocks, page, offset, searchValue, userId } = this.state;
+        
         offset += 10;
         backRequest.get(`/${page}/?offset=${offset}&name=${searchValue}&userId=${userId}`).then(responce => {
             stocks = stocks.concat(responce.data.data);
@@ -91,14 +89,19 @@ class StocksProvider extends Component {
             userId: this.state.userId
         }).then(responce => {
             const data = responce.data.data;
+
             if (data && data.count !== 0) {
                 this.setState({ windowedCount: data.count });
+
                 let { stocks, page, searchValue } = this.state;
+
                 if (page === "transactions") {
                     this.renderList(page, searchValue);
                 }
                 if (page === "userstocks") {
+
                     const findIndex = stocks.findIndex(item => item.symbol === data.symbol);
+
                     if (findIndex !== -1) {
                         stocks[findIndex].count = data.count;
                         this.setState({ stocks });
@@ -109,7 +112,9 @@ class StocksProvider extends Component {
             }
             else{
                 this.setState({ windowedCount: 0});
-                let { stocks, page, searchValue } = this.state;
+
+                let { page, searchValue } = this.state;
+
                 if (page === "transactions") {
                     this.renderList(page, searchValue);
                 }
@@ -122,12 +127,10 @@ class StocksProvider extends Component {
 
 
     render() {
-        const { stocks, loading, message, page, searchValue, offset, windowedCount, userId } = this.state;
+        const { stocks, loading, page, searchValue, offset, windowedCount, userId } = this.state;
         return (
             <StocksContext.Provider value={{
                 stocks,
-                loading,
-                message,
                 page,
                 searchValue,
                 offset,
@@ -143,7 +146,7 @@ class StocksProvider extends Component {
                 setUserId: this.setUserId
             }}>
                 {this.props.children}
-                {this.state.loading && userId!=='' && <Loader/>}
+                {loading && userId!=='' && <Loader/>}
             </StocksContext.Provider>
         )
     }
