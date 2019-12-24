@@ -35,6 +35,8 @@ class Root extends React.Component {
     }
 
     toggleAuthenticated = (userName, password, newUser) => e => {
+        console.log("toggleAuthenticated");
+        this.context.renderStocksList();
         this.setState({loading: true, authenticated: !this.state.authenticated});
         backRequest.post('/users/', {
             newUser,
@@ -68,7 +70,11 @@ class Root extends React.Component {
     };
 
     signOut = () => {
-        this.setState({ authenticated: !this.state.authenticated, userName: "Guest" });
+        this.context.renderStocksList();
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userName");
+        this.context.setUserId(undefined);
+        this.setState({ authenticated: !this.state.authenticated, userName: "Guest", selectedStock: undefined});
     };
 
     render() {
@@ -98,6 +104,7 @@ class Root extends React.Component {
                         setTransaction={this.setTransaction}
                     />}
                 </main>
+           {/*     <Loader/>*/}
             </div>
 
         );

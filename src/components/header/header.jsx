@@ -7,8 +7,6 @@ class Header extends React.Component {
     static contextType = UserContext;
 
     handleClick = () => {
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userName");
         this.context.signOut();
     };
 

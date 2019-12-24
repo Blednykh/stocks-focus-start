@@ -11,22 +11,14 @@ export const StocksContext = createContext({
     offset: 0,
     windowedCount: 0,
     userId: "",
-    renderStocksList() {
-    },
-    renderUserStockList() {
-    },
-    renderHistory() {
-    },
-    scrollLoading() {
-    },
-    changeSearchValue() {
-    },
-    setTransaction() {
-    },
-    changeWindowedCount() {
-    },
-    setUserId() {
-    }
+    renderStocksList() {},
+    renderUserStockList() {},
+    renderHistory() {},
+    scrollLoading() {},
+    changeSearchValue() {},
+    setTransaction() {},
+    changeWindowedCount() {},
+    setUserId() {}
 });
 
 class StocksProvider extends Component {

@@ -7,15 +7,8 @@ class Loader extends React.Component {
 
     render() {
         return (
-            <div className="loading">
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
-                <div className="obj"></div>
+            <div className="loading-box">
+                <div className="loader"/>
             </div>
         );
     }
